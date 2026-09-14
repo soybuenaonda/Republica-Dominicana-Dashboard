@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Operativo VGT — Multi-Hoja</title>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --primary: #0f766e;
+      --primary-dark: #134e4a;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .btn-download {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-download:hover { background-color: var(--primary-dark); }
+    
+    .controls-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .control-item { display: flex; flex-direction: column; gap: 6px; position: relative; }
+    .control-item label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;
+    }
+    .control-item select {
+      width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; outline: none; background: #fff;
+    }
+    
+    .dropdown-select-box {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      user-select: none;
+    }
+    .dropdown-select-box:after {
+      content: '▼';
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 100;
+      margin-top: 4px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .dropdown-content.show { display: block; }
+    .dropdown-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dropdown-actions button {
+      font-size: 11px;
+      padding: 3px 8px;
+      cursor: pointer;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .dropdown-actions button:hover { background: #e2e8f0; }
+
+    .multi-select-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      padding: 5px 4px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .multi-select-option:hover { background: #f8fafc; }
+    .multi-select-option input { cursor: pointer; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: var(--card-bg); border-radius: 8px; padding: 18px; border: 1px solid var(--border); }
+    .kpi-title { font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+    .kpi-value { font-size: 20px; font-weight: 700; color: var(--primary-dark); }
+    
+    .chart-container { background: var(--card-bg); border-radius: 8px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; }
+    .chart-container h3 { margin: 0 0 20px 0; font-size: 14px; font-weight: 700; color: var(--text); }
+    
+    .custom-bar-grid-dual {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 1024px) {
+      .custom-bar-grid-dual { grid-template-columns: 1fr; }
+    }
+
+    .column-panel {
+      background-color: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .custom-bar-list { display: flex; flex-direction: column; gap: 8px; }
+    .custom-bar-row { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px; width: 100%; }
+    .custom-bar-label { font-size: 11px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+    .custom-bar-track { display: flex; width: 100%; height: 20px; background-color: #e2e8f0; border-radius: 4px; border: 1px solid #cbd5e1; overflow: hidden; position: relative; }
+    .custom-bar-fill { background-color: #0f766e; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; transition: width 0.5s ease-in-out; border-right: 1px solid #134e4a; box-sizing: border-box; }
+
+    #loading-state { text-align: center; padding: 40px; font-size: 14px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1 id="main-title">REPÚBLICA DOMINICANA — TODAS LAS ZONAS</h1>
+      <p id="current-date-label" style="margin: 4px 0 0 0; color: var(--text-muted); font-size: 13px;"></p>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div id="sync-status" style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Iniciando...</div>
+      <button class="btn-download" onclick="downloadThisFile()">Descargar HTML</button>
+    </div>
+  </div>
+
+  <div class="controls-bar">
+    <div class="control-item">
+      <label for="filter-zona">1. Zona / HUB</label>
+      <select id="filter-zona" onchange="onZonaChange()">
+        <option value="ALL">Todas las Zonas</option>
+      </select>
+    </div>
+    <div class="control-item">
+      <label>2. Sectores Únicos (Selección Múltiple)</label>
+      <div id="dropdown-box" class="dropdown-select-box" onclick="toggleDropdown(event)">
+        <span id="dropdown-label">Seleccionados (Todos)</span>
+      </div>
+      <div id="dropdown-content" class="dropdown-content">
+        <div class="dropdown-actions">
+          <button type="button" onclick="toggleAllSectors(true)">Marcar Todos</button>
+          <button type="button" onclick="toggleAllSectors(false)">Desmarcar Todos</button>
+        </div>
+        <div id="filter-sector-container">
+          <!-- Checkboxes inyectados dinámicamente -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading-state">
+    <div>Consultando datos de Google Sheets y agrupando...</div>
+    <div id="debug-log" style="font-size: 12px; color: #64748b; margin-top: 8px;"></div>
+  </div>
+
+  <div id="dashboard-content" style="display: none;">
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-title">Total Sectores</div><div class="kpi-value" id="kpi-registros">0</div></div>
+      <div class="kpi-card"><div class="kpi-title">Homepass</div><div class="kpi-value" id="kpi-hp">0</div></div>
+      <div class="kpi-card"><div class="kpi-title">Condominios</div><div class="kpi-value" id="kpi-condos">0</div></div>
+      <div class="kpi-card"><div class="kpi-title">Homepass por Condominios</div><div class="kpi-value" id="kpi-hp-condos">0</div></div>
+      <div class="kpi-card"><div class="kpi-title">Entes Públicos</div><div class="kpi-value" id="kpi-ep">0</div></div>
+      <div class="kpi-card"><div class="kpi-title">PYMES</div><div class="kpi-value" id="kpi-pyme">0</div></div>
+      <div class="kpi-card"><div class="kpi-title">Centros Comerciales</div><div class="kpi-value" id="kpi-cc">0</div></div>
+      <div class="kpi-card"><div class="kpi-title">% Avance General</div><div class="kpi-value" id="kpi-avance">0%</div></div>
+    </div>
+
+    <div class="chart-container">
+      <h3 id="chart-title-label">Avance Promedio por Sector</h3>
+      <div class="custom-bar-grid-dual">
+        <div class="column-panel">
+          <div class="custom-bar-list" id="custom-bars-container-1"></div>
+        </div>
+        <div class="column-panel">
+          <div class="custom-bar-list" id="custom-bars-container-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SPREADSHEET_ID = '1iUx3aIG7aaq9lCXjmOqJENySxEdao3l6CfeTbE-iAxo';
+
+    let rawZonasRecords = [];
+    let statusZonasLoaded = false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    document.getElementById('current-date-label').innerText = `Fecha actual de consulta: ${today.toLocaleDateString('es-VE')}`;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchSheetData('PLANIFICACIÓN POR ZONAS', 'handleZonasResponse');
+
+      window.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('dropdown-content');
+        const box = document.getElementById('dropdown-box');
+        if (!box.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      });
+    });
+
+    function toggleDropdown(e) {
+      e.stopPropagation();
+      document.getElementById('dropdown-content').classList.toggle('show');
+    }
+
+    function logDebug(msg) {
+      const dbg = document.getElementById('debug-log');
+      if(dbg) dbg.innerHTML += `<br>• ${msg}`;
+    }
+
+    function downloadThisFile() {
+      const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'control_operativo_vgt.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function fetchSheetData(sheetName, callbackName) {
+      const script = document.createElement('script');
+      script.src = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=responseHandler:${callbackName}&sheet=${encodeURIComponent(sheetName)}&tq=${encodeURIComponent('select *')}&range=A1:Z5000&headers=1`;
+      script.onerror = () => { 
+        logDebug(`<span style="color:#dc2626;">Error crítico al cargar: "${sheetName}"</span>`);
+      };
+      document.body.appendChild(script);
+    }
+
+    window.handleZonasResponse = function(response) {
+      if (response && response.table) {
+        parseZonasData(response.table);
+        statusZonasLoaded = true;
+        checkInitialization();
+      } else {
+        logDebug(`<span style="color:#dc2626;">La hoja "PLANIFICACIÓN POR ZONAS" devolvió una tabla vacía.</span>`);
+      }
+    };
+
+    function cleanSectorName(name) {
+      if (!name) return '';
+      return name.replace(/^SANTO\s+DOMINGO\s+ESTE\s*[-–]?\s*/i, '').trim();
+    }
+
+    function parseZonasData(table) {
+      const getVal = (row, idx) => (row.c && row.c[idx] && row.c[idx].v !== null) ? row.c[idx].v : (row.c && row.c[idx] && row.c[idx].f !== undefined ? row.c[idx].f : '');
+      const parseClean = (val) => isNaN(parseFloat(String(val).replace(/,/g, ''))) ? 0 : parseFloat(String(val).replace(/,/g, ''));
+      const parsePct = (val) => {
+        if (!val) return 0;
+        let n = parseFloat(String(val).replace('%', '').replace(/,/g, ''));
+        return isNaN(n) ? 0 : (n <= 1 && n > 0 ? n * 100 : n);
+      };
+
+      const grouped = {};
+
+      table.rows.forEach((r) => {
+        const zonaHub = String(getVal(r, 2)).trim(); 
+        const rawSector = String(getVal(r, 4)).trim(); 
+        const sectorClean = cleanSectorName(rawSector);
+        const avance = parsePct(getVal(r, 7)); 
+        const hp = parseClean(getVal(r, 10)); // Columna K (HP Totales Relevados)
+        const condos = parseClean(getVal(r, 12)); // Columna M (Condominios Totales)
+        const hpCondos = parseClean(getVal(r, 13)); // Columna N (Homepass x Condominios Estimados)
+        const pyme = parseClean(getVal(r, 14)); // Columna O (Pymes)
+        const ep = parseClean(getVal(r, 15)); // Columna P (Ente Público)
+        const cc = parseClean(getVal(r, 16)); // Columna Q (Centro Comercial)
+
+        if (rawSector && rawSector !== 'NOMBRE ZONA' && rawSector !== 'Sector') {
+          const key = zonaHub + '|' + sectorClean;
+          
+          if (!grouped[key]) {
+            grouped[key] = {
+              zonaHub: zonaHub || 'Sin Zona',
+              sector: sectorClean,
+              avanceSum: avance,
+              hpSum: hp,
+              condosSum: condos,
+              hpCondosSum: hpCondos,
+              pymeSum: pyme,
+              epSum: ep,
+              ccSum: cc,
+              count: 1
+            };
+          } else {
+            grouped[key].avanceSum += avance;
+            grouped[key].hpSum += hp;
+            grouped[key].condosSum += condos;
+            grouped[key].hpCondosSum += hpCondos;
+            grouped[key].pymeSum += pyme;
+            grouped[key].epSum += ep;
+            grouped[key].ccSum += cc;
+            grouped[key].count += 1;
+          }
+        }
+      });
+
+      rawZonasRecords = Object.values(grouped).map((g, idx) => ({
+        rowNum: idx + 1,
+        zonaHub: g.zonaHub,
+        sector: g.sector,
+        avance: Math.round(g.avanceSum / g.count), 
+        hp: g.hpSum,
+        condos: g.condosSum,
+        hpCondos: g.hpCondosSum,
+        pyme: g.pymeSum,
+        ep: g.epSum,
+        cc: g.ccSum
+      }));
+    }
+
+    function checkInitialization() {
+      if (statusZonasLoaded) {
+        populateZonaFilter();
+        applyFilters();
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('dashboard-content').style.display = 'block';
+      }
+    }
+
+    function populateZonaFilter() {
+      const zonas = [...new Set(rawZonasRecords.map(r => r.zonaHub))].filter(Boolean).sort();
+      const zonaSelect = document.getElementById('filter-zona');
+      zonaSelect.innerHTML = '<option value="ALL">Todas las Zonas</option>';
+      zonas.forEach(z => {
+        const opt = document.createElement('option');
+        opt.value = z;
+        opt.innerText = z;
+        zonaSelect.appendChild(opt);
+      });
+      populateSectorCheckboxes('ALL');
+    }
+
+    function populateSectorCheckboxes(selectedZona) {
+      const container = document.getElementById('filter-sector-container');
+      container.innerHTML = '';
+
+      let filteredSectors = rawZonasRecords;
+      if (selectedZona !== 'ALL') {
+        filteredSectors = rawZonasRecords.filter(r => r.zonaHub === selectedZona);
+      }
+
+      const sortedSectors = [...filteredSectors].sort((a, b) => a.sector.localeCompare(b.sector));
+      
+      sortedSectors.forEach(s => {
+        const label = document.createElement('label');
+        label.className = 'multi-select-option';
+        
+        let displayText = s.sector;
+        if (selectedZona === 'ALL') {
+          displayText = `${s.sector} <span style="color:var(--text-muted); font-size:10px; margin-left:4px;">(${s.zonaHub})</span>`;
+        }
+
+        label.innerHTML = `<input type="checkbox" value="${s.rowNum}" checked onchange="applyFilters()"> <span>${displayText}</span>`;
+        container.appendChild(label);
+      });
+      updateDropdownLabel();
+    }
+
+    function toggleAllSectors(selectStatus) {
+      const checkboxes = document.querySelectorAll('#filter-sector-container input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = selectStatus);
+      applyFilters();
+    }
+
+    function onZonaChange() {
+      const selectedZona = document.getElementById('filter-zona').value;
+      populateSectorCheckboxes(selectedZona);
+      applyFilters();
+    }
+
+    function updateDropdownLabel() {
+      const checkboxes = document.querySelectorAll('#filter-sector-container input[type="checkbox"]');
+      const checked = document.querySelectorAll('#filter-sector-container input[type="checkbox"]:checked');
+      const label = document.getElementById('dropdown-label');
+
+      if (checked.length === 0) {
+        label.innerText = 'Ningún sector seleccionado';
+      } else if (checked.length === checkboxes.length) {
+        label.innerText = `Todos los sectores (${checked.length})`;
+      } else {
+        label.innerText = `Seleccionados (${checked.length} de ${checkboxes.length})`;
+      }
+    }
+
+    function applyFilters() {
+      const zonaVal = document.getElementById('filter-zona').value;
+      const selectedRowNums = Array.from(document.querySelectorAll('#filter-sector-container input[type="checkbox"]:checked')).map(cb => parseInt(cb.value));
+
+      updateDropdownLabel();
+
+      const filtered = rawZonasRecords.filter(r => {
+        const matchZona = (zonaVal === 'ALL' || r.zonaHub === zonaVal);
+        const matchSector = selectedRowNums.includes(r.rowNum);
+        return matchZona && matchSector;
+      });
+
+      renderDashboard(filtered, zonaVal);
+    }
+
+    function renderDashboard(filteredZonas, zonaVal) {
+      const totalRegistros = filteredZonas.length;
+      const totalHp = filteredZonas.reduce((acc, r) => acc + r.hp, 0);
+      const totalCondos = filteredZonas.reduce((acc, r) => acc + r.condos, 0);
+      const totalHpCondos = filteredZonas.reduce((acc, r) => acc + r.hpCondos, 0);
+      const totalEp = filteredZonas.reduce((acc, r) => acc + r.ep, 0);
+      const totalPyme = filteredZonas.reduce((acc, r) => acc + r.pyme, 0);
+      const totalCc = filteredZonas.reduce((acc, r) => acc + r.cc, 0);
+
+      const mainTitle = document.getElementById('main-title');
+      const zonaUp = String(zonaVal).toUpperCase();
+
+      if (zonaUp.includes('ESTE III')) {
+        mainTitle.innerText = "REPÚBLICA DOMINICANA — ESTE III";
+      } else if (zonaUp.includes('ESTE IV')) {
+        mainTitle.innerText = "REPÚBLICA DOMINICANA — ESTE IV";
+      } else {
+        mainTitle.innerText = "REPÚBLICA DOMINICANA — TODAS LAS ZONAS";
+      }
+
+      const avgAvance = totalRegistros > 0 ? (filteredZonas.reduce((acc, r) => acc + r.avance, 0) / totalRegistros).toFixed(1) : 0;
+
+      document.getElementById('kpi-registros').innerText = totalRegistros;
+      document.getElementById('kpi-hp').innerText = totalHp.toLocaleString('es-VE');
+      document.getElementById('kpi-condos').innerText = totalCondos.toLocaleString('es-VE');
+      document.getElementById('kpi-hp-condos').innerText = totalHpCondos.toLocaleString('es-VE');
+      document.getElementById('kpi-ep').innerText = totalEp.toLocaleString('es-VE');
+      document.getElementById('kpi-pyme').innerText = totalPyme.toLocaleString('es-VE');
+      document.getElementById('kpi-cc').innerText = totalCc.toLocaleString('es-VE');
+      document.getElementById('kpi-avance').innerText = `${avgAvance}%`;
+      document.getElementById('sync-status').innerText = `● Total Sectores: ${totalRegistros}`;
+      document.getElementById('sync-status').style.color = '#0f766e';
+
+      document.getElementById('chart-title-label').innerText = `Avance Promedio por Sector — [Total: ${filteredZonas.length} únicos]`;
+      
+      let midPoint = Math.ceil(filteredZonas.length / 2);
+      let list1Html = '';
+      let list2Html = '';
+
+      filteredZonas.forEach((r, i) => {
+        let width = r.avance > 0 ? r.avance : 0;
+        let innerText = width > 8 ? `${width}%` : '';
+        let outerText = width <= 8 && width > 0 ? `${width}%` : '';
+
+        let rowHtml = `
+          <div class="custom-bar-row">
+            <div class="custom-bar-label" title="${r.sector}"><span>${i + 1}. ${r.sector}</span></div>
+            <div class="custom-bar-track">
+              <div class="custom-bar-fill" style="width: ${width}%;">
+                ${innerText}
+              </div>
+              ${outerText ? `<div style="display:flex; align-items:center; margin-left:8px; font-weight:bold; font-size:11px; color:#0f766e;">${outerText}</div>` : ''}
+            </div>
+          </div>
+        `;
+
+        if (i < midPoint) {
+          list1Html += rowHtml;
+        } else {
+          list2Html += rowHtml;
+        }
+      });
+
+      document.getElementById('custom-bars-container-1').innerHTML = list1Html;
+      document.getElementById('custom-bars-container-2').innerHTML = list2Html;
+    }
+  </script>
+</body>
+</html>
