@@ -130,7 +130,7 @@
     }
     .multi-select-option:hover { background: #f8fafc; }
 
-    /* Etiqueta de Filtro Activo (Reemplazo del Banner) */
+    /* Etiqueta de Filtro Activo */
     .filter-badge {
       display: flex;
       align-items: center;
@@ -140,7 +140,7 @@
       font-size: 12px;
       font-weight: 500;
       height: fit-content;
-      margin-bottom: 2px; /* Ajuste visual mínimo con la base de las tarjetas blancas */
+      margin-bottom: 2px;
       transition: all 0.3s ease;
     }
     
@@ -236,7 +236,7 @@
 <div class="main-container">
   <div class="header">
     <div>
-      <h1 id="main-title">REPÚBLICA DOMINICANA — TODAS LAS ZONAS</h1>
+      <h1 id="main-title">REPÚBLICA DOMINICANA — TODOS LOS PROYECTOS</h1>
       <p id="current-date-label" style="margin: 0; color: var(--text-muted); font-size: 13px;"></p>
     </div>
     <div style="display: flex; align-items: center; gap: 16px;">
@@ -249,9 +249,9 @@
 
   <div class="controls-container">
     <div class="control-item">
-      <label for="filter-zona">1. Zona / HUB</label>
+      <label for="filter-zona">1. Proyectos</label>
       <select id="filter-zona" onchange="onZonaChange()">
-        <option value="ALL">Todas las Zonas</option>
+        <option value="ALL">Todos los Proyectos</option>
       </select>
     </div>
     <div class="control-item">
@@ -270,7 +270,7 @@
       </div>
     </div>
     
-    <!-- ETIQUETA EN LÍNEA (Reemplazo del Banner) -->
+    <!-- ETIQUETA EN LÍNEA -->
     <div id="active-filter-badge" class="filter-badge all-selected">
       <span id="badge-icon">✓</span>
       <span id="badge-text">Todos los sectores visibles</span>
@@ -330,7 +330,7 @@
       <div class="kpi-card">
         <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
         <div class="kpi-info">
-          <span class="kpi-title">HP por Condominios</span>
+          <span class="kpi-title">Homepass por Condominios</span>
           <span class="kpi-value" id="kpi-hp-condos">0</span>
         </div>
       </div>
@@ -492,7 +492,7 @@
     function populateZonaFilter() {
       const zonas = [...new Set(rawZonasRecords.map(r => r.zonaHub))].filter(Boolean).sort();
       const zonaSelect = document.getElementById('filter-zona');
-      zonaSelect.innerHTML = '<option value="ALL">Todas las Zonas</option>';
+      zonaSelect.innerHTML = '<option value="ALL">Todos los Proyectos</option>';
       zonas.forEach(z => {
         const opt = document.createElement('option');
         opt.value = z; opt.innerText = z; zonaSelect.appendChild(opt);
@@ -584,7 +584,7 @@
       const mainTitle = document.getElementById('main-title');
       const zonaUp = String(zonaVal).toUpperCase();
 
-      mainTitle.innerText = zonaUp.includes('ESTE') ? `REPÚBLICA DOMINICANA — ${zonaUp}` : "REPÚBLICA DOMINICANA — TODAS LAS ZONAS";
+      mainTitle.innerText = zonaUp.includes('ESTE') ? `REPÚBLICA DOMINICANA — ${zonaUp}` : "REPÚBLICA DOMINICANA — TODOS LOS PROYECTOS";
 
       const avgAvance = totalRegistros > 0 ? (filteredZonas.reduce((acc, r) => acc + r.avance, 0) / totalRegistros).toFixed(1) : 0;
 
