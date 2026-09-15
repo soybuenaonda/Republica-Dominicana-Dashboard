@@ -6,179 +6,248 @@
   <title>Control Operativo VGT — Multi-Hoja</title>
   <style>
     :root {
-      --bg-color: #f8fafc;
+      --bg-color: #f1f5f9;
       --card-bg: #ffffff;
       --primary: #0f766e;
       --primary-dark: #134e4a;
       --text: #0f172a;
       --text-muted: #64748b;
       --border: #e2e8f0;
+      
+      /* Semáforo para barras */
+      --bar-danger: #ef4444;
+      --bar-warning: #f59e0b;
+      --bar-success: #0f766e;
     }
+    
+    * { box-sizing: border-box; }
+    
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background-color: var(--bg-color);
       color: var(--text);
       margin: 0;
       padding: 24px;
+      display: flex;
+      justify-content: center;
     }
+
+    /* Contenedor principal para evitar estiramiento en pantallas grandes */
+    .main-container {
+      width: 100%;
+      max-width: 1366px; 
+    }
+    
     .header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
     }
+    
     .header h1 {
-      margin: 0;
-      font-size: 22px;
+      margin: 0 0 4px 0;
+      font-size: 20px;
       color: var(--primary-dark);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+    
     .btn-download {
       background-color: var(--primary);
       color: white;
       border: none;
-      padding: 8px 14px;
-      font-size: 12px;
+      padding: 10px 16px;
+      font-size: 13px;
       font-weight: 600;
       border-radius: 6px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
     }
+    
     .btn-download:hover { background-color: var(--primary-dark); }
     
-    .controls-bar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    .controls-container {
+      display: flex;
       gap: 16px;
       margin-bottom: 24px;
+      flex-wrap: wrap;
+      align-items: flex-end; /* Alinea los elementos a la base de los selectores */
+    }
+    
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      min-width: 260px;
       background: var(--card-bg);
-      padding: 16px 20px;
+      padding: 12px 16px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
-    .control-item { display: flex; flex-direction: column; gap: 6px; position: relative; }
+    
     .control-item label {
       font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;
     }
-    .control-item select {
+    
+    .control-item select, .dropdown-select-box {
       width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; outline: none; background: #fff;
     }
     
     .dropdown-select-box {
-      width: 100%;
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      font-size: 13px;
-      background: #fff;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-sizing: border-box;
-      user-select: none;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;
     }
-    .dropdown-select-box:after {
-      content: '▼';
-      font-size: 10px;
-      color: var(--text-muted);
-    }
+    
+    .dropdown-select-box:after { content: '▼'; font-size: 10px; color: var(--text-muted); }
+    
     .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 100;
-      margin-top: 4px;
-      max-height: 220px;
-      overflow-y: auto;
-      padding: 8px;
-      box-sizing: border-box;
+      display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff;
+      border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 100; margin-top: 4px; max-height: 220px; overflow-y: auto; padding: 8px;
     }
+    
     .dropdown-content.show { display: block; }
+    
     .dropdown-actions {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 8px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border);
+      display: flex; gap: 8px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
     }
+    
     .dropdown-actions button {
-      font-size: 11px;
-      padding: 3px 8px;
-      cursor: pointer;
-      background: #f1f5f9;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text);
+      font-size: 11px; padding: 4px 8px; cursor: pointer; background: #f1f5f9; border: 1px solid var(--border); border-radius: 4px; color: var(--text); flex: 1;
     }
+    
     .dropdown-actions button:hover { background: #e2e8f0; }
-
+    
     .multi-select-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      padding: 5px 4px;
-      cursor: pointer;
-      border-radius: 4px;
+      display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px; cursor: pointer; border-radius: 4px;
     }
     .multi-select-option:hover { background: #f8fafc; }
-    .multi-select-option input { cursor: pointer; }
 
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .kpi-card { background: var(--card-bg); border-radius: 8px; padding: 18px; border: 1px solid var(--border); }
-    .kpi-title { font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
-    .kpi-value { font-size: 20px; font-weight: 700; color: var(--primary-dark); }
-    
-    .chart-container { background: var(--card-bg); border-radius: 8px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; }
-    .chart-container h3 { margin: 0 0 20px 0; font-size: 14px; font-weight: 700; color: var(--text); }
-    
-    .custom-bar-grid-dual {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+    /* Etiqueta de Filtro Activo (Reemplazo del Banner) */
+    .filter-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      height: fit-content;
+      margin-bottom: 2px; /* Ajuste visual mínimo con la base de las tarjetas blancas */
+      transition: all 0.3s ease;
     }
+    
+    .filter-badge.all-selected {
+      background-color: transparent;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+    }
+    
+    .filter-badge.partial-selected {
+      background-color: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fcd34d;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    
+    .filter-badge.partial-selected strong {
+      color: #92400e;
+    }
+
+    /* KPIs Rediseñados */
+    .kpi-grid { 
+      display: grid; 
+      grid-template-columns: repeat(4, 1fr); 
+      gap: 16px; 
+      margin-bottom: 24px; 
+    }
+    
+    .kpi-card { 
+      background: var(--card-bg); 
+      border-radius: 8px; 
+      padding: 16px; 
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    
+    .kpi-icon {
+      width: 42px; height: 42px; border-radius: 8px; background: #f1f5f9;
+      display: flex; align-items: center; justify-content: center; color: var(--primary);
+      flex-shrink: 0;
+    }
+    
+    .kpi-icon svg { width: 22px; height: 22px; fill: currentColor; }
+    
+    .kpi-info { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    
+    .kpi-title { font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+    .kpi-value { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
+    
+    /* Tarjeta Especial Avance */
+    .kpi-card.highlight { background: var(--primary); border-color: var(--primary-dark); color: white; }
+    .kpi-card.highlight .kpi-icon { background: rgba(255,255,255,0.2); color: white; }
+    .kpi-card.highlight .kpi-title { color: rgba(255,255,255,0.8); }
+    .kpi-card.highlight .kpi-value { color: white; }
+    
+    /* Gráficos */
+    .chart-container { background: var(--card-bg); border-radius: 8px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; }
+    
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .chart-header h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--text); }
+    
+    .custom-bar-grid-dual { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    
     @media (max-width: 1024px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
       .custom-bar-grid-dual { grid-template-columns: 1fr; }
     }
-
-    .column-panel {
-      background-color: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
+    
+    @media (max-width: 600px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+      .control-item { width: 100%; }
     }
 
-    .custom-bar-list { display: flex; flex-direction: column; gap: 8px; }
-    .custom-bar-row { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px; width: 100%; }
-    .custom-bar-label { font-size: 11px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
-    .custom-bar-track { display: flex; width: 100%; height: 20px; background-color: #e2e8f0; border-radius: 4px; border: 1px solid #cbd5e1; overflow: hidden; position: relative; }
-    .custom-bar-fill { background-color: #0f766e; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; transition: width 0.5s ease-in-out; border-right: 1px solid #134e4a; box-sizing: border-box; }
+    .custom-bar-list { display: flex; flex-direction: column; gap: 12px; }
+    .custom-bar-row { display: grid; grid-template-columns: 160px 1fr; align-items: center; gap: 12px; width: 100%; }
+    .custom-bar-label { font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .custom-bar-track { display: flex; width: 100%; height: 22px; background-color: #f1f5f9; border-radius: 4px; border: 1px solid var(--border); overflow: hidden; }
+    .custom-bar-fill { height: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-weight: bold; font-size: 11px; transition: width 0.5s ease-in-out; }
+    
+    .val-danger { background-color: var(--bar-danger); }
+    .val-warning { background-color: var(--bar-warning); }
+    .val-success { background-color: var(--bar-success); }
 
-    #loading-state { text-align: center; padding: 40px; font-size: 14px; color: var(--text-muted); }
+    #loading-state { text-align: center; padding: 40px; font-size: 14px; color: var(--text-muted); background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); }
   </style>
 </head>
 <body>
 
+<div class="main-container">
   <div class="header">
     <div>
       <h1 id="main-title">REPÚBLICA DOMINICANA — TODAS LAS ZONAS</h1>
-      <p id="current-date-label" style="margin: 4px 0 0 0; color: var(--text-muted); font-size: 13px;"></p>
+      <p id="current-date-label" style="margin: 0; color: var(--text-muted); font-size: 13px;"></p>
     </div>
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <div id="sync-status" style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Iniciando...</div>
-      <button class="btn-download" onclick="downloadThisFile()">Descargar HTML</button>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <button class="btn-download" onclick="downloadThisFile()">
+        <svg style="width:16px;height:16px;fill:white;" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Descargar HTML
+      </button>
     </div>
   </div>
 
-  <div class="controls-bar">
+  <div class="controls-container">
     <div class="control-item">
       <label for="filter-zona">1. Zona / HUB</label>
       <select id="filter-zona" onchange="onZonaChange()">
@@ -186,51 +255,117 @@
       </select>
     </div>
     <div class="control-item">
-      <label>2. Sectores Únicos (Selección Múltiple)</label>
+      <label>2. Sectores Únicos</label>
       <div id="dropdown-box" class="dropdown-select-box" onclick="toggleDropdown(event)">
         <span id="dropdown-label">Seleccionados (Todos)</span>
       </div>
       <div id="dropdown-content" class="dropdown-content">
         <div class="dropdown-actions">
           <button type="button" onclick="toggleAllSectors(true)">Marcar Todos</button>
-          <button type="button" onclick="toggleAllSectors(false)">Desmarcar Todos</button>
+          <button type="button" onclick="toggleAllSectors(false)">Desmarcar</button>
         </div>
         <div id="filter-sector-container">
           <!-- Checkboxes inyectados dinámicamente -->
         </div>
       </div>
     </div>
+    
+    <!-- ETIQUETA EN LÍNEA (Reemplazo del Banner) -->
+    <div id="active-filter-badge" class="filter-badge all-selected">
+      <span id="badge-icon">✓</span>
+      <span id="badge-text">Todos los sectores visibles</span>
+    </div>
   </div>
 
   <div id="loading-state">
-    <div>Consultando datos de Google Sheets y agrupando...</div>
+    <div>Consultando datos operativos y procesando métricas...</div>
     <div id="debug-log" style="font-size: 12px; color: #64748b; margin-top: 8px;"></div>
   </div>
 
   <div id="dashboard-content" style="display: none;">
+    
+    <!-- GRID DE KPIs -->
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-title">Total Sectores</div><div class="kpi-value" id="kpi-registros">0</div></div>
-      <div class="kpi-card"><div class="kpi-title">Homepass</div><div class="kpi-value" id="kpi-hp">0</div></div>
-      <div class="kpi-card"><div class="kpi-title">Condominios</div><div class="kpi-value" id="kpi-condos">0</div></div>
-      <div class="kpi-card"><div class="kpi-title">Homepass por Condominios</div><div class="kpi-value" id="kpi-hp-condos">0</div></div>
-      <div class="kpi-card"><div class="kpi-title">Entes Públicos</div><div class="kpi-value" id="kpi-ep">0</div></div>
-      <div class="kpi-card"><div class="kpi-title">PYMES</div><div class="kpi-value" id="kpi-pyme">0</div></div>
-      <div class="kpi-card"><div class="kpi-title">Centros Comerciales</div><div class="kpi-value" id="kpi-cc">0</div></div>
-      <div class="kpi-card"><div class="kpi-title">% Avance General</div><div class="kpi-value" id="kpi-avance">0%</div></div>
+      
+      <div class="kpi-card">
+        <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg></div>
+        <div class="kpi-info">
+          <span class="kpi-title">Homepass</span>
+          <span class="kpi-value" id="kpi-hp">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M7 19h10V4H7v15zm-5-2h4V6H2v11zM17 6v11h4V6h-4z"/></svg></div>
+        <div class="kpi-info">
+          <span class="kpi-title">Condominios</span>
+          <span class="kpi-value" id="kpi-condos">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg></div>
+        <div class="kpi-info">
+          <span class="kpi-title">Entes Públicos</span>
+          <span class="kpi-value" id="kpi-ep">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg></div>
+        <div class="kpi-info">
+          <span class="kpi-title">PYMES</span>
+          <span class="kpi-value" id="kpi-pyme">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+        <div class="kpi-info">
+          <span class="kpi-title">Sectores Visibles</span>
+          <span class="kpi-value" id="kpi-registros">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
+        <div class="kpi-info">
+          <span class="kpi-title">HP por Condominios</span>
+          <span class="kpi-value" id="kpi-hp-condos">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M21 5H3v14h18V5zm-2 12H5V7h14v10z"/></svg></div>
+        <div class="kpi-info">
+          <span class="kpi-title">Centros Comerciales</span>
+          <span class="kpi-value" id="kpi-cc">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card highlight">
+        <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></div>
+        <div class="kpi-info">
+          <span class="kpi-title">% Avance General</span>
+          <span class="kpi-value" id="kpi-avance">0%</span>
+        </div>
+      </div>
+
     </div>
 
+    <!-- SECCIÓN DE BARRAS -->
     <div class="chart-container">
-      <h3 id="chart-title-label">Avance Promedio por Sector</h3>
+      <div class="chart-header">
+        <h3 id="chart-title-label">Estatus de Relevamiento por Sector</h3>
+        <span style="font-size: 12px; color: var(--text-muted);">Ordenado por prioridad (Menor a Mayor)</span>
+      </div>
       <div class="custom-bar-grid-dual">
-        <div class="column-panel">
-          <div class="custom-bar-list" id="custom-bars-container-1"></div>
-        </div>
-        <div class="column-panel">
-          <div class="custom-bar-list" id="custom-bars-container-2"></div>
-        </div>
+        <div><div class="custom-bar-list" id="custom-bars-container-1"></div></div>
+        <div><div class="custom-bar-list" id="custom-bars-container-2"></div></div>
       </div>
     </div>
   </div>
+</div>
 
   <script>
     const SPREADSHEET_ID = '1y5QN7S71mL-jMpL-5OFLnXMJOygkccrK8oBK_AKQa6c';
@@ -240,7 +375,7 @@
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    document.getElementById('current-date-label').innerText = `Fecha actual de consulta: ${today.toLocaleDateString('es-VE')}`;
+    document.getElementById('current-date-label').innerText = `Fecha de consulta: ${today.toLocaleDateString('es-VE')}`;
 
     window.addEventListener('DOMContentLoaded', () => {
       fetchSheetData('Hoja 1', 'handleZonasResponse');
@@ -269,7 +404,7 @@
       const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'control_operativo_vgt.html';
+      a.download = 'control_operativo_vgt_mejorado.html';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -279,7 +414,7 @@
       const script = document.createElement('script');
       script.src = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=responseHandler:${callbackName}&sheet=${encodeURIComponent(sheetName)}&tq=${encodeURIComponent('select *')}&range=A1:Z5000&headers=1`;
       script.onerror = () => { 
-        logDebug(`<span style="color:#dc2626;">Error crítico al cargar: "${sheetName}"</span>`);
+        logDebug(`<span style="color:#dc2626;">Error crítico al cargar origen de datos.</span>`);
       };
       document.body.appendChild(script);
     }
@@ -289,8 +424,6 @@
         parseZonasData(response.table);
         statusZonasLoaded = true;
         checkInitialization();
-      } else {
-        logDebug(`<span style="color:#dc2626;">La hoja "Hoja 1" devolvió una tabla vacía.</span>`);
       }
     };
 
@@ -311,42 +444,29 @@
       const grouped = {};
 
       table.rows.forEach((r) => {
-        const zonaHub = String(getVal(r, 2)).trim(); // Columna C (HUB)
-        const rawSector = String(getVal(r, 4)).trim(); // Columna E (NOMBRE ZONA)
+        const zonaHub = String(getVal(r, 2)).trim();
+        const rawSector = String(getVal(r, 4)).trim();
         const sectorClean = cleanSectorName(rawSector);
-        const avance = parsePct(getVal(r, 7)); // Columna H (% DE RELEVAMIENTO)
-        const hp = parseClean(getVal(r, 10)); // Columna K (HP Totales Relevados)
-        const condos = parseClean(getVal(r, 12)); // Columna M (Condominios Totales)
-        const hpCondos = parseClean(getVal(r, 13)); // Columna N (Homepass x Condominios Estimados)
-        const pyme = parseClean(getVal(r, 14)); // Columna O (Pymes)
-        const ep = parseClean(getVal(r, 15)); // Columna P (Ente Público)
-        const cc = parseClean(getVal(r, 16)); // Columna Q (Centro Comercial)
+        const avance = parsePct(getVal(r, 7));
+        const hp = parseClean(getVal(r, 10));
+        const condos = parseClean(getVal(r, 12));
+        const hpCondos = parseClean(getVal(r, 13));
+        const pyme = parseClean(getVal(r, 14));
+        const ep = parseClean(getVal(r, 15));
+        const cc = parseClean(getVal(r, 16));
 
         if (rawSector && rawSector !== 'NOMBRE ZONA' && rawSector !== 'Sector') {
           const key = zonaHub + '|' + sectorClean;
           
           if (!grouped[key]) {
             grouped[key] = {
-              zonaHub: zonaHub || 'Sin Zona',
-              sector: sectorClean,
-              avanceSum: avance,
-              hpSum: hp,
-              condosSum: condos,
-              hpCondosSum: hpCondos,
-              pymeSum: pyme,
-              epSum: ep,
-              ccSum: cc,
-              count: 1
+              zonaHub: zonaHub || 'Sin Zona', sector: sectorClean, avanceSum: avance, hpSum: hp, condosSum: condos,
+              hpCondosSum: hpCondos, pymeSum: pyme, epSum: ep, ccSum: cc, count: 1
             };
           } else {
-            grouped[key].avanceSum += avance;
-            grouped[key].hpSum += hp;
-            grouped[key].condosSum += condos;
-            grouped[key].hpCondosSum += hpCondos;
-            grouped[key].pymeSum += pyme;
-            grouped[key].epSum += ep;
-            grouped[key].ccSum += cc;
-            grouped[key].count += 1;
+            grouped[key].avanceSum += avance; grouped[key].hpSum += hp; grouped[key].condosSum += condos;
+            grouped[key].hpCondosSum += hpCondos; grouped[key].pymeSum += pyme; grouped[key].epSum += ep;
+            grouped[key].ccSum += cc; grouped[key].count += 1;
           }
         }
       });
@@ -356,12 +476,7 @@
         zonaHub: g.zonaHub,
         sector: g.sector,
         avance: Math.round(g.avanceSum / g.count), 
-        hp: g.hpSum,
-        condos: g.condosSum,
-        hpCondos: g.hpCondosSum,
-        pyme: g.pymeSum,
-        ep: g.epSum,
-        cc: g.ccSum
+        hp: g.hpSum, condos: g.condosSum, hpCondos: g.hpCondosSum, pyme: g.pymeSum, ep: g.epSum, cc: g.ccSum
       }));
     }
 
@@ -380,9 +495,7 @@
       zonaSelect.innerHTML = '<option value="ALL">Todas las Zonas</option>';
       zonas.forEach(z => {
         const opt = document.createElement('option');
-        opt.value = z;
-        opt.innerText = z;
-        zonaSelect.appendChild(opt);
+        opt.value = z; opt.innerText = z; zonaSelect.appendChild(opt);
       });
       populateSectorCheckboxes('ALL');
     }
@@ -401,12 +514,7 @@
       sortedSectors.forEach(s => {
         const label = document.createElement('label');
         label.className = 'multi-select-option';
-        
-        let displayText = s.sector;
-        if (selectedZona === 'ALL') {
-          displayText = `${s.sector} <span style="color:var(--text-muted); font-size:10px; margin-left:4px;">(${s.zonaHub})</span>`;
-        }
-
+        let displayText = selectedZona === 'ALL' ? `${s.sector} <span style="color:var(--text-muted); font-size:10px; margin-left:4px;">(${s.zonaHub})</span>` : s.sector;
         label.innerHTML = `<input type="checkbox" value="${s.rowNum}" checked onchange="applyFilters()"> <span>${displayText}</span>`;
         container.appendChild(label);
       });
@@ -414,28 +522,41 @@
     }
 
     function toggleAllSectors(selectStatus) {
-      const checkboxes = document.querySelectorAll('#filter-sector-container input[type="checkbox"]');
-      checkboxes.forEach(cb => cb.checked = selectStatus);
+      document.querySelectorAll('#filter-sector-container input[type="checkbox"]').forEach(cb => cb.checked = selectStatus);
       applyFilters();
     }
 
     function onZonaChange() {
-      const selectedZona = document.getElementById('filter-zona').value;
-      populateSectorCheckboxes(selectedZona);
+      populateSectorCheckboxes(document.getElementById('filter-zona').value);
       applyFilters();
     }
 
     function updateDropdownLabel() {
       const checkboxes = document.querySelectorAll('#filter-sector-container input[type="checkbox"]');
       const checked = document.querySelectorAll('#filter-sector-container input[type="checkbox"]:checked');
+      
       const label = document.getElementById('dropdown-label');
+      const badge = document.getElementById('active-filter-badge');
+      const badgeText = document.getElementById('badge-text');
+      const badgeIcon = document.getElementById('badge-icon');
 
-      if (checked.length === 0) {
-        label.innerText = 'Ningún sector seleccionado';
-      } else if (checked.length === checkboxes.length) {
-        label.innerText = `Todos los sectores (${checked.length})`;
+      const totalCount = checkboxes.length;
+      const checkedCount = checked.length;
+
+      // 1. Etiqueta interna del selector
+      if (checkedCount === 0) label.innerText = 'Ningún sector seleccionado';
+      else if (checkedCount === totalCount) label.innerText = `Todos los sectores (${checkedCount})`;
+      else label.innerText = `Seleccionados (${checkedCount} de ${totalCount})`;
+
+      // 2. Etiqueta exterior contextual (Badge)
+      if (checkedCount === totalCount) {
+        badge.className = 'filter-badge all-selected';
+        badgeIcon.innerText = '✓';
+        badgeText.innerText = `Todos los sectores visibles (${totalCount})`;
       } else {
-        label.innerText = `Seleccionados (${checked.length} de ${checkboxes.length})`;
+        badge.className = 'filter-badge partial-selected';
+        badgeIcon.innerText = '⚠️';
+        badgeText.innerHTML = `Mostrando <strong>${checkedCount}</strong> de <strong>${totalCount}</strong> sectores`;
       }
     }
 
@@ -446,75 +567,67 @@
       updateDropdownLabel();
 
       const filtered = rawZonasRecords.filter(r => {
-        const matchZona = (zonaVal === 'ALL' || r.zonaHub === zonaVal);
-        const matchSector = selectedRowNums.includes(r.rowNum);
-        return matchZona && matchSector;
+        return (zonaVal === 'ALL' || r.zonaHub === zonaVal) && selectedRowNums.includes(r.rowNum);
       });
 
       renderDashboard(filtered, zonaVal);
     }
 
+    function getBarColorClass(avance) {
+      if (avance < 50) return 'val-danger';
+      if (avance < 100) return 'val-warning';
+      return 'val-success';
+    }
+
     function renderDashboard(filteredZonas, zonaVal) {
       const totalRegistros = filteredZonas.length;
-      const totalHp = filteredZonas.reduce((acc, r) => acc + r.hp, 0);
-      const totalCondos = filteredZonas.reduce((acc, r) => acc + r.condos, 0);
-      const totalHpCondos = filteredZonas.reduce((acc, r) => acc + r.hpCondos, 0);
-      const totalEp = filteredZonas.reduce((acc, r) => acc + r.ep, 0);
-      const totalPyme = filteredZonas.reduce((acc, r) => acc + r.pyme, 0);
-      const totalCc = filteredZonas.reduce((acc, r) => acc + r.cc, 0);
-
       const mainTitle = document.getElementById('main-title');
       const zonaUp = String(zonaVal).toUpperCase();
 
-      if (zonaUp.includes('ESTE III')) {
-        mainTitle.innerText = "REPÚBLICA DOMINICANA — ESTE III";
-      } else if (zonaUp.includes('ESTE IV')) {
-        mainTitle.innerText = "REPÚBLICA DOMINICANA — ESTE IV";
-      } else {
-        mainTitle.innerText = "REPÚBLICA DOMINICANA — TODAS LAS ZONAS";
-      }
+      mainTitle.innerText = zonaUp.includes('ESTE') ? `REPÚBLICA DOMINICANA — ${zonaUp}` : "REPÚBLICA DOMINICANA — TODAS LAS ZONAS";
 
       const avgAvance = totalRegistros > 0 ? (filteredZonas.reduce((acc, r) => acc + r.avance, 0) / totalRegistros).toFixed(1) : 0;
 
+      // Asignar KPIs
       document.getElementById('kpi-registros').innerText = totalRegistros;
-      document.getElementById('kpi-hp').innerText = totalHp.toLocaleString('es-VE');
-      document.getElementById('kpi-condos').innerText = totalCondos.toLocaleString('es-VE');
-      document.getElementById('kpi-hp-condos').innerText = totalHpCondos.toLocaleString('es-VE');
-      document.getElementById('kpi-ep').innerText = totalEp.toLocaleString('es-VE');
-      document.getElementById('kpi-pyme').innerText = totalPyme.toLocaleString('es-VE');
-      document.getElementById('kpi-cc').innerText = totalCc.toLocaleString('es-VE');
+      document.getElementById('kpi-hp').innerText = filteredZonas.reduce((a, r) => a + r.hp, 0).toLocaleString('es-VE');
+      document.getElementById('kpi-condos').innerText = filteredZonas.reduce((a, r) => a + r.condos, 0).toLocaleString('es-VE');
+      document.getElementById('kpi-hp-condos').innerText = filteredZonas.reduce((a, r) => a + r.hpCondos, 0).toLocaleString('es-VE');
+      document.getElementById('kpi-ep').innerText = filteredZonas.reduce((a, r) => a + r.ep, 0).toLocaleString('es-VE');
+      document.getElementById('kpi-pyme').innerText = filteredZonas.reduce((a, r) => a + r.pyme, 0).toLocaleString('es-VE');
+      document.getElementById('kpi-cc').innerText = filteredZonas.reduce((a, r) => a + r.cc, 0).toLocaleString('es-VE');
       document.getElementById('kpi-avance').innerText = `${avgAvance}%`;
-      document.getElementById('sync-status').innerText = `● Total Sectores: ${totalRegistros}`;
-      document.getElementById('sync-status').style.color = '#0f766e';
-
-      document.getElementById('chart-title-label').innerText = `Avance Promedio por Sector — [Total: ${filteredZonas.length} únicos]`;
       
+      document.getElementById('chart-title-label').innerText = `Estatus de Relevamiento por Sector (${filteredZonas.length})`;
+      
+      // ORDENAR: Menor avance primero para destacar prioridad directiva
+      filteredZonas.sort((a, b) => {
+        if (a.avance !== b.avance) return a.avance - b.avance;
+        return a.sector.localeCompare(b.sector);
+      });
+
       let midPoint = Math.ceil(filteredZonas.length / 2);
-      let list1Html = '';
-      let list2Html = '';
+      let list1Html = '', list2Html = '';
 
       filteredZonas.forEach((r, i) => {
         let width = r.avance > 0 ? r.avance : 0;
-        let innerText = width > 8 ? `${width}%` : '';
-        let outerText = width <= 8 && width > 0 ? `${width}%` : '';
+        let colorClass = getBarColorClass(width);
+        
+        let innerText = width > 10 ? `${width}%` : '';
+        let outerText = width <= 10 ? `<span style="color:var(--text); margin-left:6px; font-weight:bold; font-size:11px;">${width}%</span>` : '';
 
         let rowHtml = `
           <div class="custom-bar-row">
-            <div class="custom-bar-label" title="${r.sector}"><span>${i + 1}. ${r.sector}</span></div>
+            <div class="custom-bar-label" title="${r.sector}">${r.sector}</div>
             <div class="custom-bar-track">
-              <div class="custom-bar-fill" style="width: ${width}%;">
-                ${innerText}
-              </div>
-              ${outerText ? `<div style="display:flex; align-items:center; margin-left:8px; font-weight:bold; font-size:11px; color:#0f766e;">${outerText}</div>` : ''}
+              <div class="custom-bar-fill ${colorClass}" style="width: ${width}%;">${innerText}</div>
+              ${outerText}
             </div>
           </div>
         `;
 
-        if (i < midPoint) {
-          list1Html += rowHtml;
-        } else {
-          list2Html += rowHtml;
-        }
+        if (i < midPoint) list1Html += rowHtml;
+        else list2Html += rowHtml;
       });
 
       document.getElementById('custom-bars-container-1').innerHTML = list1Html;
