@@ -233,7 +233,7 @@
   </div>
 
   <script>
-    const SPREADSHEET_ID = '1iUx3aIG7aaq9lCXjmOqJENySxEdao3l6CfeTbE-iAxo';
+    const SPREADSHEET_ID = '1y5QN7S71mL-jMpL-5OFLnXMJOygkccrK8oBK_AKQa6c';
 
     let rawZonasRecords = [];
     let statusZonasLoaded = false;
@@ -243,7 +243,7 @@
     document.getElementById('current-date-label').innerText = `Fecha actual de consulta: ${today.toLocaleDateString('es-VE')}`;
 
     window.addEventListener('DOMContentLoaded', () => {
-      fetchSheetData('PLANIFICACIÓN POR ZONAS', 'handleZonasResponse');
+      fetchSheetData('Hoja 1', 'handleZonasResponse');
 
       window.addEventListener('click', (e) => {
         const dropdown = document.getElementById('dropdown-content');
@@ -290,7 +290,7 @@
         statusZonasLoaded = true;
         checkInitialization();
       } else {
-        logDebug(`<span style="color:#dc2626;">La hoja "PLANIFICACIÓN POR ZONAS" devolvió una tabla vacía.</span>`);
+        logDebug(`<span style="color:#dc2626;">La hoja "Hoja 1" devolvió una tabla vacía.</span>`);
       }
     };
 
@@ -311,10 +311,10 @@
       const grouped = {};
 
       table.rows.forEach((r) => {
-        const zonaHub = String(getVal(r, 2)).trim(); 
-        const rawSector = String(getVal(r, 4)).trim(); 
+        const zonaHub = String(getVal(r, 2)).trim(); // Columna C (HUB)
+        const rawSector = String(getVal(r, 4)).trim(); // Columna E (NOMBRE ZONA)
         const sectorClean = cleanSectorName(rawSector);
-        const avance = parsePct(getVal(r, 7)); 
+        const avance = parsePct(getVal(r, 7)); // Columna H (% DE RELEVAMIENTO)
         const hp = parseClean(getVal(r, 10)); // Columna K (HP Totales Relevados)
         const condos = parseClean(getVal(r, 12)); // Columna M (Condominios Totales)
         const hpCondos = parseClean(getVal(r, 13)); // Columna N (Homepass x Condominios Estimados)
