@@ -30,6 +30,7 @@
       padding: 24px;
       display: flex;
       justify-content: center;
+      font-weight: 700;
     }
 
     /* Contenedor principal para evitar estiramiento en pantallas grandes */
@@ -53,6 +54,7 @@
       color: var(--primary-dark);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      font-weight: 900;
     }
     
     .btn-download {
@@ -61,7 +63,7 @@
       border: none;
       padding: 10px 16px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       border-radius: 6px;
       cursor: pointer;
       display: flex;
@@ -91,18 +93,19 @@
       border-radius: 8px;
       border: 1px solid var(--border);
       box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      font-weight: 700;
     }
     
     .control-item label {
-      font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;
+      font-size: 11px; font-weight: 900; text-transform: uppercase; color: var(--text); letter-spacing: 0.5px;
     }
     
     .control-item select, .dropdown-select-box {
-      width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; outline: none; background: #fff;
+      width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; outline: none; background: #fff; font-weight: 700;
     }
     
     .dropdown-select-box {
-      cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; font-weight: 700;
     }
     
     .dropdown-select-box:after { content: '▼'; font-size: 10px; color: var(--text-muted); }
@@ -110,7 +113,7 @@
     .dropdown-content {
       display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff;
       border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 100; margin-top: 4px; max-height: 220px; overflow-y: auto; padding: 8px;
+      z-index: 100; margin-top: 4px; max-height: 220px; overflow-y: auto; padding: 8px; font-weight: 700;
     }
     
     .dropdown-content.show { display: block; }
@@ -120,13 +123,13 @@
     }
     
     .dropdown-actions button {
-      font-size: 11px; padding: 4px 8px; cursor: pointer; background: #f1f5f9; border: 1px solid var(--border); border-radius: 4px; color: var(--text); flex: 1;
+      font-size: 11px; padding: 4px 8px; cursor: pointer; background: #f1f5f9; border: 1px solid var(--border); border-radius: 4px; color: var(--text); flex: 1; font-weight: 700;
     }
     
     .dropdown-actions button:hover { background: #e2e8f0; }
     
     .multi-select-option {
-      display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px; cursor: pointer; border-radius: 4px;
+      display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px; cursor: pointer; border-radius: 4px; font-weight: 700;
     }
     .multi-select-option:hover { background: #f8fafc; }
 
@@ -138,7 +141,7 @@
       padding: 8px 14px;
       border-radius: 6px;
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 700;
       height: fit-content;
       margin-bottom: 2px;
       transition: all 0.3s ease;
@@ -146,8 +149,9 @@
     
     .filter-badge.all-selected {
       background-color: transparent;
-      color: var(--text-muted);
+      color: var(--text);
       border: 1px solid transparent;
+      font-weight: 700;
     }
     
     .filter-badge.partial-selected {
@@ -155,10 +159,12 @@
       color: #b45309;
       border: 1px solid #fcd34d;
       box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      font-weight: 700;
     }
     
     .filter-badge.partial-selected strong {
       color: #92400e;
+      font-weight: 900;
     }
 
     /* KPIs Rediseñados */
@@ -178,6 +184,7 @@
       align-items: center;
       gap: 16px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      font-weight: 700;
     }
     
     .kpi-icon {
@@ -190,20 +197,21 @@
     
     .kpi-info { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     
-    .kpi-title { font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-    .kpi-value { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
+    .kpi-title { font-size: 11px; text-transform: uppercase; font-weight: 900; color: var(--text); margin-bottom: 4px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+    .kpi-value { font-size: 22px; font-weight: 900; color: var(--text); line-height: 1; }
     
     /* Tarjeta Especial Avance */
     .kpi-card.highlight { background: var(--primary); border-color: var(--primary-dark); color: white; }
     .kpi-card.highlight .kpi-icon { background: rgba(255,255,255,0.2); color: white; }
-    .kpi-card.highlight .kpi-title { color: rgba(255,255,255,0.8); }
-    .kpi-card.highlight .kpi-value { color: white; }
+    .kpi-card.highlight .kpi-title { color: white; font-weight: 900; }
+    .kpi-card.highlight .kpi-value { color: white; font-weight: 900; }
     
     /* Gráficos */
-    .chart-container { background: var(--card-bg); border-radius: 8px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; }
+    .chart-container { background: var(--card-bg); border-radius: 8px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; font-weight: 700; }
     
     .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .chart-header h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--text); }
+    .chart-header h3 { margin: 0; font-size: 15px; font-weight: 900; color: var(--text); }
+    .chart-header span { font-weight: 700; }
     
     .custom-bar-grid-dual { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
     
@@ -219,16 +227,16 @@
 
     .custom-bar-list { display: flex; flex-direction: column; gap: 12px; }
     .custom-bar-row { display: grid; grid-template-columns: 160px 1fr; align-items: center; gap: 12px; width: 100%; }
-    .custom-bar-label { font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .custom-bar-label { font-size: 12px; font-weight: 900; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
     .custom-bar-track { display: flex; width: 100%; height: 22px; background-color: #f1f5f9; border-radius: 4px; border: 1px solid var(--border); overflow: hidden; }
-    .custom-bar-fill { height: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-weight: bold; font-size: 11px; transition: width 0.5s ease-in-out; }
+    .custom-bar-fill { height: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-weight: 900; font-size: 11px; transition: width 0.5s ease-in-out; }
     
     .val-danger { background-color: var(--bar-danger); }
     .val-warning { background-color: var(--bar-warning); }
     .val-success { background-color: var(--bar-success); }
 
-    #loading-state { text-align: center; padding: 40px; font-size: 14px; color: var(--text-muted); background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); }
+    #loading-state { text-align: center; padding: 40px; font-size: 14px; color: var(--text); background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); font-weight: 700; }
   </style>
 </head>
 <body>
@@ -237,7 +245,7 @@
   <div class="header">
     <div>
       <h1 id="main-title">REPÚBLICA DOMINICANA — TODOS LOS PROYECTOS</h1>
-      <p id="current-date-label" style="margin: 0; color: var(--text-muted); font-size: 13px;"></p>
+      <p id="current-date-label" style="margin: 0; color: var(--text); font-size: 13px; font-weight: 700;"></p>
     </div>
     <div style="display: flex; align-items: center; gap: 16px;">
       <button class="btn-download" onclick="downloadThisFile()">
@@ -279,7 +287,7 @@
 
   <div id="loading-state">
     <div>Consultando datos operativos y procesando métricas...</div>
-    <div id="debug-log" style="font-size: 12px; color: #64748b; margin-top: 8px;"></div>
+    <div id="debug-log" style="font-size: 12px; color: var(--text); margin-top: 8px; font-weight: 700;"></div>
   </div>
 
   <div id="dashboard-content" style="display: none;">
@@ -357,7 +365,7 @@
     <div class="chart-container">
       <div class="chart-header">
         <h3 id="chart-title-label">Estatus de Relevamiento por Sector</h3>
-        <span style="font-size: 12px; color: var(--text-muted);">Ordenado por prioridad (Menor a Mayor)</span>
+        <span style="font-size: 12px; color: var(--text); font-weight: 700;">Ordenado por prioridad (Menor a Mayor)</span>
       </div>
       <div class="custom-bar-grid-dual">
         <div><div class="custom-bar-list" id="custom-bars-container-1"></div></div>
@@ -514,7 +522,7 @@
       sortedSectors.forEach(s => {
         const label = document.createElement('label');
         label.className = 'multi-select-option';
-        let displayText = selectedZona === 'ALL' ? `${s.sector} <span style="color:var(--text-muted); font-size:10px; margin-left:4px;">(${s.zonaHub})</span>` : s.sector;
+        let displayText = selectedZona === 'ALL' ? `${s.sector} <span style="color:var(--text); font-size:10px; margin-left:4px; font-weight:700;">(${s.zonaHub})</span>` : s.sector;
         label.innerHTML = `<input type="checkbox" value="${s.rowNum}" checked onchange="applyFilters()"> <span>${displayText}</span>`;
         container.appendChild(label);
       });
@@ -614,7 +622,7 @@
         let colorClass = getBarColorClass(width);
         
         let innerText = width > 10 ? `${width}%` : '';
-        let outerText = width <= 10 ? `<span style="color:var(--text); margin-left:6px; font-weight:bold; font-size:11px;">${width}%</span>` : '';
+        let outerText = width <= 10 ? `<span style="color:var(--text); margin-left:6px; font-weight:900; font-size:11px;">${width}%</span>` : '';
 
         let rowHtml = `
           <div class="custom-bar-row">
